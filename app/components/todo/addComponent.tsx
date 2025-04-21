@@ -15,7 +15,7 @@ export default function AddComponent() {
         const name = formData.get("name") as string;
         const price = parseInt(formData.get("price") as string);
         console.log("상품 등록:", { name, price });
-        navigate("/products/list");
+        navigate("/product/list");
     };
 
     return (

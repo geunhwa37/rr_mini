@@ -19,7 +19,7 @@ export default function ListComponent() {
                         <h3 className="text-lg font-semibold">{prod.name}</h3>
                         <p className="text-sm text-gray-600">가격: {prod.price.toLocaleString()}원</p>
                         <Link
-                            to={`/products/edit/${prod.id}`}
+                            to={`/product/edit/${prod.id}`}
                             className="mt-auto inline-block text-blue-600 hover:underline"
                         >
                             ✏️ 수정하기
@@ -29,7 +29,7 @@ export default function ListComponent() {
             </div>
             <div className="mt-6">
                 <Link
-                    to="/products/add"
+                    to="/product/add"
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
                     ➕ 상품 추가하기
