@@ -1,25 +1,45 @@
 
-import { Link } from "react-router";
+import {Link, Navigate, useSearchParams} from "react-router";
+import {useQuery} from "@tanstack/react-query";
+import {getProducts} from "~/api/productAPI";
+import React from "react";
+import type {ProductListDTO} from "~/types/product";
 
 export default function ListComponent() {
-    const dummyProducts = [
-        { id: 1, name: "상품 A", price: 10000 },
-        { id: 2, name: "상품 B", price: 15000 },
-    ];
+    const [searchParams] = useSearchParams();
 
+    const pageStr = searchParams.get("page") || "1"
+    const sizeStr = searchParams.get("size") || "10"
+
+    const {isFetching, data, error} = useQuery({
+        queryKey: ["products", pageStr, sizeStr],
+        queryFn: () => getProducts(pageStr, sizeStr),
+    });
+    console.log(data)
+
+    const totalPages = data?.total ?? 0; //data가 없으면 totalPages는 0, 있으면 data.total 값을 씀
+
+   /* if(error){
+        return (
+            <Navigate to="/member/login" replace /> //에러 있을 시 로그인 화면으로 이동
+        )
+    }
+*/
     return (
         <div className="max-w-4xl mx-auto p-4 sm:p-6">
+            <div className={'text-3xl bg-amber-600'}> {isFetching && <h1>Loading.........</h1>}</div>
+
             <h2 className="text-xl sm:text-2xl font-bold mb-4">📦 상품 목록</h2>
             <div className="grid gap-4 sm:grid-cols-2">
-                {dummyProducts.map((prod) => (
+                {data?.dtoList.map((prod: ProductListDTO) => (
                     <div
-                        key={prod.id}
+                        key={prod.pno}
                         className="p-4 border rounded-lg shadow-sm bg-white flex flex-col gap-2"
                     >
-                        <h3 className="text-lg font-semibold">{prod.name}</h3>
+                        <h3 className="text-lg font-semibold">{prod.pname}</h3>
                         <p className="text-sm text-gray-600">가격: {prod.price.toLocaleString()}원</p>
                         <Link
-                            to={`/product/edit/${prod.id}`}
+                            to={`/product/edit/${prod.pno}`}
                             className="mt-auto inline-block text-blue-600 hover:underline"
                         >
                             ✏️ 수정하기
@@ -34,6 +54,49 @@ export default function ListComponent() {
                 >
                     ➕ 상품 추가하기
                 </Link>
+
+                {/* 페이지네이션 버튼 */}
+                {data && (
+                    <div className="flex justify-center gap-2 mt-6">
+                        {/* 이전 버튼 */}
+                        {data.prev && (
+                            <Link
+                                to={`/product/list?page=${data.start - 1}&size=${sizeStr}`}
+                                className="px-3 py-1 border rounded bg-gray-200 hover:bg-gray-300"
+                            >
+                                ◀ 이전
+                            </Link>
+                        )}
+
+                        {/* 숫자 페이지 버튼 */}
+                        {Array.from({ length: data.end - data.start + 1 }, (_, i) => {
+                            const pageNum = data.start + i;
+                            return (
+                                <Link
+                                    key={pageNum}
+                                    to={`/product/list?page=${pageNum}&size=${sizeStr}`}
+                                    className={`px-3 py-1 border rounded ${
+                                        pageNum === parseInt(pageStr)
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-white text-gray-700"
+                                    }`}
+                                >
+                                    {pageNum}
+                                </Link>
+                            );
+                        })}
+
+                        {/* 다음 버튼 */}
+                        {data.next && (
+                            <Link
+                                to={`/product/list?page=${data.end + 1}&size=${sizeStr}`}
+                                className="px-3 py-1 border rounded bg-gray-200 hover:bg-gray-300"
+                            >
+                                다음 ▶
+                            </Link>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -3,10 +3,11 @@ import React from 'react';
 import ListComponent from "~/components/todo/listComponent";
 
 function ListPage() {
+
     return (
         <div>
             <div>Product List Page</div>
-            <ListComponent></ListComponent>
+            <ListComponent/>
         </div>
     );
 }
