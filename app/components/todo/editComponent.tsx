@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router";
 import { useRef } from "react";
 import type { FormEvent } from "react";
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {getProduct, modifyProduct} from "~/api/productAPI";
+import {getProduct, modifyProduct, removeProduct} from "~/api/productAPI";
 import type {ProductModifyDTO} from "~/types/product";
 
 interface EditComponentProps {
@@ -19,8 +19,8 @@ export default function EditComponent({data, pnoNumber}: EditComponentProps) {
         return <div>상품 정보를 불러올 수 없습니다.</div>;
     }
 
-    // useMutation을 사용하여 상품 수정 요청 보내기
-    const mutation = useMutation({
+    //상품 수정 - useMutation을 사용하여 상품 수정 요청 보내기
+    const modifyMutation = useMutation({
         mutationFn: (product: ProductModifyDTO) => modifyProduct(pnoNumber ?? 0, product),
         onSuccess: () => {
             // 수정 성공 후 목록 페이지로 이동
@@ -30,6 +30,17 @@ export default function EditComponent({data, pnoNumber}: EditComponentProps) {
             console.error("상품 수정 실패", error);
         }
     });
+
+    //상품 삭제
+    const deleteMutation = useMutation({
+        mutationFn: () => removeProduct(pnoNumber ?? 0), // 삭제 요청
+        onSuccess: () => {
+            navigate("/product/list"); // 삭제 후 목록 페이지로 이동
+        },
+        onError: (error) => {
+            console.error("상품 삭제 실패", error);
+        }
+    })
 
     // 상품 수정 폼을 제출할 때 호출되는 함수
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -57,7 +68,14 @@ export default function EditComponent({data, pnoNumber}: EditComponentProps) {
         };
 
         // 수정 요청 실행
-        mutation.mutate(product);
+        modifyMutation.mutate(product);
+    };
+
+    //상품 삭제 함수
+    const handleDelete = () => {
+        if (window.confirm("정말로 이 상품을 삭제하시겠습니까?")) {
+            deleteMutation.mutate();
+        }
     };
 
     return (
@@ -112,12 +130,21 @@ export default function EditComponent({data, pnoNumber}: EditComponentProps) {
                         className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-500"
                     />
                 </div>
-                <button
-                    type="submit"
-                    className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                    수정 완료
-                </button>
+                <div className="flex space-x-4">
+                    <button
+                        type="submit"
+                        className="w-full mt-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+                    >
+                        수정
+                    </button>
+                    {/* 삭제 버튼 */}
+                    <button
+                        onClick={handleDelete}
+                        className="w-full mt-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
+                    >
+                        삭제
+                    </button>
+                </div>
             </form>
         </div>
     );

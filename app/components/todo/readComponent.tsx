@@ -62,7 +62,7 @@ export default function ProductReadPage({data} : ReadComponentProps) {
                     to={`/product/edit/${data?.pno}`}
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
                 >
-                    ✏️ 수정하기
+                    ✏️ 수정/삭제
                 </Link>
             </div>
         </div>
