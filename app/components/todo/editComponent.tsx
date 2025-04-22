@@ -2,21 +2,62 @@
 import { useParams, useNavigate } from "react-router";
 import { useRef } from "react";
 import type { FormEvent } from "react";
+import {useMutation, useQuery} from "@tanstack/react-query";
+import {getProduct, modifyProduct} from "~/api/productAPI";
+import type {ProductModifyDTO} from "~/types/product";
 
-export default function EditComponent() {
-    const { id } = useParams();
+interface EditComponentProps {
+    data: any;
+    pnoNumber: number | null;
+}
+
+export default function EditComponent({data, pnoNumber}: EditComponentProps) {
     const formRef = useRef<HTMLFormElement | null>(null);
     const navigate = useNavigate();
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    if (pnoNumber === null) {
+        return <div>상품 정보를 불러올 수 없습니다.</div>;
+    }
+
+    // useMutation을 사용하여 상품 수정 요청 보내기
+    const mutation = useMutation({
+        mutationFn: (product: ProductModifyDTO) => modifyProduct(pnoNumber ?? 0, product),
+        onSuccess: () => {
+            // 수정 성공 후 목록 페이지로 이동
+            navigate("/product/list");
+        },
+        onError: (error) => {
+            console.error("상품 수정 실패", error);
+        }
+    });
+
+    // 상품 수정 폼을 제출할 때 호출되는 함수
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const form = formRef.current;
+
+        const form = formRef.current; //formRef로 참조한 폼 엘리먼트 가져오기
         if (!form) return;
-        const formData = new FormData(form);
-        const name = formData.get("name") as string;
+        const formData = new FormData(form); //폼의 데이터를 FormData 객체로 변환
+
+        const pname = formData.get("pname") as string;
         const price = parseInt(formData.get("price") as string);
-        console.log("상품 수정:", { id, name, price });
-        navigate("/product/list");
+        const pdesc = formData.get("pdesc") as string;
+        const imageNamesStr = formData.get("imageNames") as string;
+        const imageNames = imageNamesStr
+            .split(',')
+            .map(str => str.trim()) // 공백 제거
+            .filter(str => str.length > 0); // 빈 문자열 제거
+
+        const product: ProductModifyDTO = {
+            pno: pnoNumber,
+            pname,
+            price,
+            pdesc,
+            imageNames
+        };
+
+        // 수정 요청 실행
+        mutation.mutate(product);
     };
 
     return (
@@ -24,14 +65,14 @@ export default function EditComponent() {
             <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-800">상품 수정</h2>
                 <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-600 mb-1">
+                    <label htmlFor="pname" className="block text-sm font-medium text-gray-600 mb-1">
                         상품명
                     </label>
                     <input
-                        name="name"
-                        id="name"
+                        name="pname"
+                        id="pname"
                         type="text"
-                        defaultValue={`기존 상품 ${id}`}
+                        defaultValue={data?.pname}
                         className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-500"
                     />
                 </div>
@@ -43,7 +84,31 @@ export default function EditComponent() {
                         name="price"
                         id="price"
                         type="number"
-                        defaultValue={10000}
+                        defaultValue={data?.price}
+                        className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-500"
+                    />
+                </div>
+                <div>
+                    <label htmlFor="pdesc" className="block text-sm font-medium text-gray-600 mb-1">
+                        설명
+                    </label>
+                    <input
+                        name="pdesc"
+                        id="price"
+                        type="text"
+                        defaultValue={data?.pdesc}
+                        className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-500"
+                    />
+                </div>
+                <div>
+                    <label htmlFor="imageNames" className="block text-sm font-medium text-gray-600 mb-1">
+                        사진
+                    </label>
+                    <input
+                        name="imageNames"
+                        id="imageNames"
+                        type="text"
+                        defaultValue={data?.imageNames?.join(",") ?? ""}
                         className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-500"
                     />
                 </div>

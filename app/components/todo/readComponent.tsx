@@ -3,24 +3,16 @@ import {useQuery} from "@tanstack/react-query";
 import {getProduct, getProducts} from "~/api/productAPI";
 import React from "react";
 
-export default function ProductReadPage() {
+interface ReadComponentProps {
+    data: any;  // props로 data를 받도록 인터페이스 정의
+}
 
-    const { pno } = useParams<{ pno: string }>(); // useParams로 pno 값을 가져옴
+export default function ProductReadPage({data} : ReadComponentProps) {
 
-    // pno가 존재하면 숫자로 변환, 없으면 null 처리
-    const pnoNumber = pno ? parseInt(pno, 10) : null;
-
-    // pno가 NaN이 아니면만 query 요청
-    const { isFetching, data, error } = useQuery({
-        queryKey: ["product", pnoNumber],  // queryKey에 pnoNumber 포함
-        queryFn: () => getProduct(pnoNumber),
-        enabled:  pnoNumber !== null,  // pno가 null일 때 fetch하지 않음
-    });
+    console.log(data)
 
     return (
         <div className="max-w-2xl mx-auto p-4 sm:p-6 bg-white rounded-xl shadow-md mt-6">
-
-            <div className={'text-3xl bg-amber-600'}> {isFetching && <h1>Loading.........</h1>}</div>
 
             <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">📦 상품 상세</h2>
 
