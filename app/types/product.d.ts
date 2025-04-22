@@ -15,6 +15,8 @@ export interface ProductReadDTO {
     price: number;
     pdesc: string;
     imageNames: string[];
+    regDate: Date;
+    modDate: Date;
 }
 
 export interface ProductAddDTO {

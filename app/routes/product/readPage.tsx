@@ -1,8 +1,11 @@
 // 상품 조회 페이지 (ReadPage.tsx)
 import React from 'react';
 import ReadComponent from "~/components/todo/readComponent";
+import {useParams} from "react-router";
 
 function ReadPage() {
+
+
     return (
         <div>
             <div>Product Read Page</div>

@@ -9,7 +9,12 @@ export async function getProducts(page:string, size:string){
     return res.data;
 }
 //2. 조회
-export async function getProduct(pno:number): Promise<ProductReadDTO> {
+export async function getProduct(pno:number | null): Promise<ProductReadDTO | null> {
+
+    if (pno === null) {
+        return null; // pno가 null이면 바로 null 리턴
+    }
+
     const res = await axios.get(`${host}/read/${pno}`);
     return res.data;
 }

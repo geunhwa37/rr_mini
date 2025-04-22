@@ -36,7 +36,13 @@ export default function ListComponent() {
                         key={prod.pno}
                         className="p-4 border rounded-lg shadow-sm bg-white flex flex-col gap-2"
                     >
-                        <h3 className="text-lg font-semibold">{prod.pname}</h3>
+                        <Link
+                            to={`/product/read/${prod.pno}`}
+                            className="text-sm sm:text-base px-3 py-2 rounded-md bg-blue-100 text-black hover:bg-blue-400"
+                        >
+
+                            <h3 className="text-lg font-semibold">{prod.pname}</h3>
+                        </Link>
                         <p className="text-sm text-gray-600">가격: {prod.price.toLocaleString()}원</p>
                         <Link
                             to={`/product/edit/${prod.pno}`}
