@@ -4,7 +4,7 @@ export interface ProductListDTO {
     pname: string;
     price: number;
     seller: string;
-    imgName: string;
+    fileName: stirng;
     avgRating: number;
     reviewCnt: number;
 }
@@ -14,7 +14,7 @@ export interface ProductReadDTO {
     pname: string;
     price: number;
     pdesc: string;
-    imageNames: string[];
+    files: string[];
     regDate: Date;
     modDate: Date;
 }
@@ -23,7 +23,7 @@ export interface ProductAddDTO {
     pname: string;
     pdesc: string;
     price: number;
-    imageNames: string[];
+    files: File[];
 }
 
 export interface ProductModifyDTO {
@@ -31,5 +31,5 @@ export interface ProductModifyDTO {
     pname: string;
     pdesc: string;
     price: number;
-    imageNames: string[];
+    files: File[];
 }

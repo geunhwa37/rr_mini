@@ -20,12 +20,50 @@ export async function getProduct(pno:number | null): Promise<ProductReadDTO | nu
 }
 //3. 등록
 export async function addProduct(product: ProductAddDTO): Promise<number> {
-    const res = await axios.post(`${host}/add`, product);
+
+    // 1. FormData 생성
+    const formData = new FormData();
+
+    // 2. 일반 데이터 추가
+    formData.append("pname", product.pname);
+    formData.append("price", String(product.price));
+    formData.append("pdesc", product.pdesc);
+
+    // 3. 파일 데이터 추가 (파일 배열 처리)
+    product.files.forEach((file) => {
+        formData.append("files", file);
+    });
+
+    // 4. FormData를 서버로 전송
+    const res = await axios.post(`${host}/add`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data", // multipart/form-data 헤더 설정
+        },
+    });
     return res.data;
 }
 //4. 수정
 export async function modifyProduct(pno: number, product: ProductModifyDTO): Promise<void> {
-    const res = await axios.post(`${host}/modify/${pno}`, product);
+
+    // 1. FormData 생성
+    const formData = new FormData();
+    formData.append("pname", product.pname);
+    formData.append("price", String(product.price));
+    formData.append("pdesc", product.pdesc);
+
+    // 2. 파일 데이터 추가 (파일 배열 처리)
+    if (product.files) {
+        product.files.forEach((file) => {
+            formData.append("files", file);
+        });
+    }
+
+    // 3. FormData를 서버로 전송
+    const res = await axios.post(`${host}/modify/${pno}`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data", // multipart/form-data 헤더 설정
+        },
+    });
     return res.data;
 }
 //5. 삭제

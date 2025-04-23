@@ -31,6 +31,14 @@ export default function ListComponent({data, pageStr, sizeStr}:ListComponentProp
                         key={prod.pno}
                         className="p-4 border rounded-lg shadow-sm bg-white flex flex-col gap-2"
                     >
+                        {/* 👇 fileName 있으면 이미지 표시 */}
+                        {prod.fileName && (
+                            <img
+                                src={`http://localhost:8080/view/${prod.fileName}`}
+                                alt={prod.pname}
+                                className="w-full h-48 object-cover rounded"
+                            />
+                        )}
                         <Link
                             to={`/product/read/${prod.pno}`}
                             className="text-sm sm:text-base px-3 py-2 rounded-md bg-blue-100 text-black hover:bg-blue-400"

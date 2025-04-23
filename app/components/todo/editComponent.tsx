@@ -53,18 +53,14 @@ export default function EditComponent({data, pnoNumber}: EditComponentProps) {
         const pname = formData.get("pname") as string;
         const price = parseInt(formData.get("price") as string);
         const pdesc = formData.get("pdesc") as string;
-        const imageNamesStr = formData.get("imageNames") as string;
-        const imageNames = imageNamesStr
-            .split(',')
-            .map(str => str.trim()) // 공백 제거
-            .filter(str => str.length > 0); // 빈 문자열 제거
+        const files = formData.getAll("files") as File[];
 
         const product: ProductModifyDTO = {
             pno: pnoNumber,
             pname,
             price,
             pdesc,
-            imageNames
+            files
         };
 
         // 수정 요청 실행
@@ -112,21 +108,21 @@ export default function EditComponent({data, pnoNumber}: EditComponentProps) {
                     </label>
                     <input
                         name="pdesc"
-                        id="price"
+                        id="pdesc"
                         type="text"
                         defaultValue={data?.pdesc}
                         className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-500"
                     />
                 </div>
                 <div>
-                    <label htmlFor="imageNames" className="block text-sm font-medium text-gray-600 mb-1">
+                    <label htmlFor="files" className="block text-sm font-medium text-gray-600 mb-1">
                         사진
                     </label>
                     <input
-                        name="imageNames"
-                        id="imageNames"
-                        type="text"
-                        defaultValue={data?.imageNames?.join(",") ?? ""}
+                        name="files"
+                        id="files"
+                        type="file"
+                        multiple // 여러 파일 선택 가능
                         className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-500"
                     />
                 </div>

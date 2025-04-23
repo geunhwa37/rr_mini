@@ -2,6 +2,7 @@ import {Link, useParams, useSearchParams} from "react-router";
 import {useQuery} from "@tanstack/react-query";
 import {getProduct, getProducts} from "~/api/productAPI";
 import React from "react";
+import {img} from "framer-motion/m";
 
 interface ReadComponentProps {
     data: any;  // props로 data를 받도록 인터페이스 정의
@@ -17,11 +18,15 @@ export default function ProductReadPage({data} : ReadComponentProps) {
             <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">📦 상품 상세</h2>
 
             {/* 이미지 */}
-            <div className="w-full mb-6">
-                <img
-                    alt={data?.pname}
-                    className="w-full rounded-lg object-cover max-h-80"
-                />
+            <div className="w-full overflow-x-scroll whitespace-nowrap mb-6">
+                {data?.files?.map((fileUrl: string, idx: number) => (
+                    <img
+                        key={idx}
+                        alt={`${data?.pname} 이미지 ${idx + 1}`}
+                        src={fileUrl}
+                        className="inline-block w-60 h-60 object-cover mr-4 rounded-lg"
+                    />
+                ))}
             </div>
 
             <div className="space-y-4">
